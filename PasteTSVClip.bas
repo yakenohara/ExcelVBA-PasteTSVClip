@@ -20,7 +20,7 @@ Attribute VB_Name = "PasteTSVClip"
 
 Sub PasteTSVClip()
 
-    Dim CB As New DataObject
+    Dim CBstr As String
     
     Dim delimiter As String: delimiter = vbTab 'セル間区切り文字
     Dim NLCharacter As String: NLCharacter = vbCrLf '改行文字
@@ -54,15 +54,15 @@ Sub PasteTSVClip()
         Exit Sub
     End If
     
-    CB.GetFromClipboard 'クリップボードの内容を取得
+    GetCB CBstr 'クリップボードの内容を取得
     
-    If Not (CB.GetFormat(1)) Then 'テキスト形式でない場合
+    If (CBstr = "") Then 'テキスト形式でない場合
         retVal = MsgBox(noClipMessage, vbExclamation)
         Exit Sub '終了
         
     End If
     
-    linesOfToPasteText = Split(CB.GetText, NLCharacter) '行区切りの文字列配列を取得
+    linesOfToPasteText = Split(CBstr, NLCharacter) '行区切りの文字列配列を取得
     
     maxNumOfLines = UBoundSafe(linesOfToPasteText)
     
@@ -166,3 +166,27 @@ ERROR_:
 End Function
 
 
+'<クリップボード操作>-------------------------------------------
+
+'クリップボードに文字列を格納
+Private Sub SetCB(ByVal str As String)
+  With CreateObject("Forms.TextBox.1")
+    .MultiLine = True
+    .Text = str
+    .SelStart = 0
+    .SelLength = .TextLength
+    .Copy
+  End With
+End Sub
+
+'クリップボードから文字列を取得
+Private Sub GetCB(ByRef str As String)
+  With CreateObject("Forms.TextBox.1")
+    .MultiLine = True
+    If .CanPaste = True Then .Paste
+    str = .Text
+  End With
+End Sub
+
+'------------------------------------------</クリップボード操作>
+ 
