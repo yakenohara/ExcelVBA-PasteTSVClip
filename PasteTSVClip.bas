@@ -1,7 +1,7 @@
 Attribute VB_Name = "PasteTSVClip"
 '<License>------------------------------------------------------------
 '
-' Copyright (c) 2018 Shinnosuke Yakenohara
+' Copyright (c) 2019 Shinnosuke Yakenohara
 '
 ' This program is free software: you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ Sub PasteTSVClip()
     End If
     
     'シート選択状態チェック
-    If ActiveWindow.SelectedSheets.count > 1 Then
+    If ActiveWindow.SelectedSheets.Count > 1 Then
         MsgBox "複数シートが選択されています" & vbLf & _
                "不要なシート選択を解除してください"
         Exit Sub
@@ -128,15 +128,17 @@ Sub PasteTSVClip()
         End If
         
         For columnCounter = 0 To numOfColumns '列ループ
+        
+            Set range_to_paste = Cells(Selection(1).Row + lineCounter, Selection(1).Column + columnCounter)
             
             '結合セルの場合は、結合セルの左上にのみペーストする
-            If (Selection(1).Offset(lineCounter, columnCounter).Address = Selection(1).Offset(lineCounter, columnCounter).MergeArea.Cells(1, 1).Address) Then
+            If (range_to_paste.Address = range_to_paste.MergeArea.Cells(1, 1).Address) Then
                 
-                '空文字の場合は、無視設定されていなかれば貼り付ける
+                '空文字の場合は、無視設定されていなければ貼り付ける
                 If (toPasteStrings(columnCounter) <> "") Or _
                    ((toPasteStrings(columnCounter) = "") And Not (ignoreVacant)) Then
                    
-                    Selection(1).Offset(lineCounter, columnCounter).Value = toPasteStrings(columnCounter)
+                    range_to_paste.Value = toPasteStrings(columnCounter)
                     
                 End If
                 
@@ -190,3 +192,7 @@ End Sub
 
 '------------------------------------------</クリップボード操作>
  
+
+
+
+
